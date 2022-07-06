@@ -28,6 +28,51 @@
         <div style="width: 100%;height:36vh;overflow-y:auto;">
           <img src="../../assets/img/infoHead.png" style="display: inline-block;vertical-align: bottom;width: 1.6vw;height: 1.6vw">
           <p style="color: #77D1DD;display: inline-block;font-size: 1.4vw;vertical-align: bottom;margin: 0px">介绍</p>
+          <a :href="cityInfo.video" target="_blank" referrerpolicy="no-referrer" style="color: #584338;text-decoration: underline">
+            <p style="font-size: 1.4vw;display: inline-block;vertical-align: bottom;margin: 0px;" >
+              :{{curCity}}
+            </p>
+          </a>
+          <br/>
+          <p style="color: #584338;text-indent: 2em;font-size: 1vmax;display: inline-block;vertical-align: bottom;margin: 1vh 0">{{cityInfo.info}}</p>
+          <p style="color: #77D1DD;display: inline-block;font-size: 1.4vw;vertical-align: bottom;margin: 0px">自然风光</p>
+          <br/>
+          <p style="color: #584338;text-indent: 2em;font-size: 1vmax;display: inline-block;vertical-align: bottom;margin: 0px">{{cityInfo.nature}}</p>
+          <br/>
+          <p style="color: #77D1DD;display: inline-block;font-size: 1.4vw;vertical-align: bottom;margin: 0px">景观</p>
+          <br/>
+          <p style="color: #584338;text-indent: 2em;font-size: 1vmax;display: inline-block;vertical-align: bottom;margin: 0px">{{cityInfo.landscape}}</p>
+          <br/>
+          <p style="color: #77D1DD;display: inline-block;font-size: 1.4vw;vertical-align: bottom;margin: 0px">景观</p>
+          <br/>
+          <p style="color: #584338;text-indent: 2em;font-size: 1vmax;display: inline-block;vertical-align: bottom;margin: 0px">{{cityInfo.landscape}}</p>
+          <br/>
+          <p style="color: #77D1DD;display: inline-block;font-size: 1.4vw;vertical-align: bottom;margin: 0px">名人</p>
+          <br/>
+          <p style="color: #584338;text-indent: 2em;font-size: 1vmax;display: inline-block;vertical-align: bottom;margin: 0px">{{cityInfo.celebrity}}</p>
+          <br/>
+          <p style="color: #77D1DD;display: inline-block;font-size: 1.4vw;vertical-align: bottom;margin: 0px">特产</p>
+          <br/>
+          <p style="color: #584338;text-indent: 2em;font-size: 1vmax;display: inline-block;vertical-align: bottom;margin: 0px">{{cityInfo.specialties}}</p>
+          <br/>
+          <p style="color: #77D1DD;display: inline-block;font-size: 1.4vw;vertical-align: bottom;margin: 0px">故事</p>
+          <br/>
+          <p style="color: #584338;text-indent: 2em;font-size: 1vmax;display: inline-block;vertical-align: bottom;margin: 0px">{{cityInfo.story}}</p>
+          <br/>
+          <p style="color: #77D1DD;display: inline-block;font-size: 1.4vw;vertical-align: bottom;margin: 0px">民俗</p>
+          <br/>
+          <p style="color: #584338;text-indent: 2em;font-size: 1vmax;display: inline-block;vertical-align: bottom;margin: 0px">{{cityInfo.folklore}}</p>
+          <br/>
+          <p style="color: #77D1DD;display: inline-block;font-size: 1.4vw;vertical-align: bottom;margin: 0px">地理环境</p>
+          <br/>
+          <p style="color: #584338;text-indent: 2em;font-size: 1vmax;display: inline-block;vertical-align: bottom;margin: 0px">{{cityInfo.add}}</p>
+
+        </div>
+      </el-card>
+      <el-card  class="box-card" id="info-box2" v-if="(curMapName=='浙江'||curMapName=='江苏'||curMapName=='上海')&&deviceMode==0&&curCity!=''" >
+        <div style="width: 100%;height:36vh;overflow-y:auto;">
+          <img src="../../assets/img/infoHead.png" style="display: inline-block;vertical-align: bottom;width: 1.6vw;height: 1.6vw">
+          <p style="color: #77D1DD;display: inline-block;font-size: 1.4vw;vertical-align: bottom;margin: 0px">介绍</p>
           <a :href="cityInfo.video" target="_blank" referrerpolicy="no-referrer">
             <p style="font-size: 1.4vw;display: inline-block;vertical-align: bottom;margin: 0px;" >
               :{{curCity}}
@@ -68,22 +113,17 @@
           <p style="text-indent: 2em;font-size: 1vmax;display: inline-block;vertical-align: bottom;margin: 0px">{{cityInfo.add}}</p>
 
         </div>
-      </el-card>
-      <el-card  class="box-card" id="info-box2" v-if="(curMapName=='浙江'||curMapName=='江苏'||curMapName=='上海')&&deviceMode==0&&curCity!=''" >
-          <span ><img src="../../assets/img/infoHead.png" style="display: inline-block;vertical-align: bottom;width: 1.6vmax;height: 1.6vmax">
-            <p style="color: #77D1DD;display: inline-block;font-size: 1.4vmax;vertical-align: bottom;margin: 0px">介绍</p>
-            <p style="font-size: 1.4vmax;display: inline-block;vertical-align: bottom;margin: 0px">:{{curCity}}</p>
-          </span>
+
       </el-card>
 <!--      诗歌-->
       <el-card  class="box-card" id="info-box3" v-if="(curMapName=='浙江'||curMapName=='江苏'||curMapName=='上海')&&deviceMode==1&&curCity!=''" >
-        {{poetryInfo.name}}
-        <br/>
-        作者: {{poetryInfo.author}}
-        <div class="poetryList" v-for="i in poetryInfo.poetryList">
-          {{i}}
+        <div style="width: 100%;height:14vh;overflow-y:auto;">
+          <p style="color: #584338;font-size: 1vw;margin: 0px">{{poetryInfo.name}}</p>
+          <p style="color: #584338;font-size: 1vw;margin: 0px">作者: {{poetryInfo.author}}</p>
+          <div class="poetryList" v-for="i in poetryInfo.poetryList">
+            <p style="color: #584338;font-size: 1vw;margin: 0px">{{i}}</p>
+          </div>
         </div>
-
       </el-card>
       <el-card  class="box-card" id="info-box4" v-if="curMapName!='china'&&deviceMode==0" >
       </el-card>

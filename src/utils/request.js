@@ -6,7 +6,7 @@ import Axios from 'axios'
 
 
 //后台的contextPath 不是http 全路径 ，请求后台用反向代理
-const baseUrl = 'api'
+const baseUrl = 'api/1.0'
 
 /*
  * 请求配置 config
@@ -14,6 +14,7 @@ const baseUrl = 'api'
 const getConfig = (url, method, isJSON, params,message={message:false,hideLoading:false},isDownload=false) => {
     // console.log(message)
     var split = '/'
+    console.log(baseUrl)
     if(url.substring(0,1) == '/') {
         split = '';
     }

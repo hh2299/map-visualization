@@ -360,7 +360,6 @@ export default {
             this.curCity = params.name;
             this.curLevel =2
             let curCityCode = cityCode[this.curCity]
-            console.log(curCityCode)
             if (curCityCode!=undefined&&cityCode[this.curCity].substr(0, 3) == "310") {
               curCityCode = "310000"
             }
@@ -370,6 +369,14 @@ export default {
                 let poetryLen = poetryList.length
                 let n = Math.floor(Math.random()*poetryLen);    // 可均衡获取 0 到 9 的随机整数。
                 this.poetryInfo = poetryList[n]
+                let temp = []
+                for (let i = 0,j=0; i < this.poetryInfo.poetryList.length; i++) {
+                  if (i % 2 == 0) {
+                    temp[j] = this.poetryInfo.poetryList[i] + ","+ this.poetryInfo.poetryList[i+1]+"。";
+                    j++;
+                  }
+                }
+                this.poetryInfo.poetryList = temp
               });
 
               MapChartApi.getCityInfo({cityCode:curCityCode}).then(res=>{
