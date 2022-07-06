@@ -6,13 +6,12 @@ import Axios from 'axios'
 
 
 //后台的contextPath 不是http 全路径 ，请求后台用反向代理
-const baseUrl = 'api'
+const baseUrl = 'api/1.0'
 
 /*
  * 请求配置 config
  */
-const getConfig = (url, method, isJSON, params,message={message:false,hideLoading:false},isDownload=false) => {
-    // console.log(message)
+export const getConfig = (url, method, isJSON, params, message={message:false,hideLoading:false}, isDownload=false) => {
     var split = '/'
     if(url.substring(0,1) == '/') {
         split = '';
@@ -42,7 +41,6 @@ const getConfig = (url, method, isJSON, params,message={message:false,hideLoadin
         config.params = params
     } else {
         config.data = params
-        // config.data.buildingIds = ["89892831829","123123122"];
     }
     return config
 }
@@ -79,7 +77,8 @@ const postForm = (url, params,hideLoading) => {
  */
 
 const get = (url, params,message) => {
-    return Axios(getConfig(url, 'get', false, params,message))
+    let result = Axios(getConfig(url, 'get', false, params,message))
+    return result
 }
 
 export {

@@ -7,52 +7,6 @@ import * as MapChartApi from "@/api/mapChart.js"
 import * as icon from "./iconLocation"
 import {getDecoration} from "./iconLocation";
 
-// const posHandler = {
-//   posMap: {},
-//   reset: function() {
-//     this.posMap = {};
-//   },
-//   getDeltaPos: function(params){
-//     var rect = params.rect;
-//     var labelWidth = 20, labelHeight = 10;
-//     var gridx = Math.floor(rect.x / labelWidth);
-//     var gridy = Math.floor(rect.y / labelHeight);
-//     var currCell = [gridx, gridy], currPos = [];
-//     var increaseArr = [[0, -1], [1, -1], [1, 0], [1, 1], [0, 1], [-1, -1], [-1, 0], [-1, -1]];
-//     // 将显示区域划分成一个个定宽和定高的区域
-//     // 将标签放在离它最近的区域
-//     // 如果最近的那格没有，向周围九宫格上面找
-//     // 找到一个没有放过的,分配给它，然后得出一个偏移量
-//     var found = false;
-//     // 如果格子已被占，循环查找
-//     if(this.posMap[currCell[0] + '-' + currCell[1]]) {
-//       while(!found) {
-//         for(var i = 0;i<increaseArr.length;i++) {
-//           currCell[0] = currCell[0] + increaseArr[i][0];
-//           currCell[1] = currCell[1] + increaseArr[i][1];
-//           if (!this.posMap[currCell[0] + '-' + currCell[1]]) {
-//             found = true;
-//             this.posMap[currCell[0]+'-'+currCell[1]] = params.text;
-//             currPos = [currCell[0]* labelWidth, currCell[1] * labelHeight];
-//             break;
-//           }
-//         }
-//         if(found) {
-//           break;
-//         }
-//       }
-//     } else {
-//       // 如果格子没有被占，就它了
-//       this.posMap[gridx + '-' + gridy] = params.text
-//     }
-//     currPos = [currCell[0]* labelWidth, currCell[1] * labelHeight];
-//     var deltaPos = {
-//       dx: currPos[0] - rect.x,
-//       dy: currPos[1] - rect.y
-//     }
-//     return deltaPos;
-//   }
-// };
 
 export default {
 
@@ -74,6 +28,7 @@ export default {
       option1: {},  //基本
       option2: {},
       option: {},
+      delSeries: [],
       selectedMaps:[
         {
           name:'china',
@@ -102,7 +57,6 @@ export default {
   methods:{
     // 定位
     getlocation() {
-
       this.$nextTick(function () {
         try {
           const geolocation = new BMap.Geolocation();
@@ -114,12 +68,19 @@ export default {
             background: 'rgba(0, 0, 0, 0.7)'
           });
           geolocation.getCurrentPosition(r => {
-            console.log(r, "aaa");
             if (geolocation.getStatus() == BMAP_STATUS_SUCCESS) {
               _that.lat = r.point.lat;
               _that.lng = r.point.lng;
-              _that.city = r.address.city;
-              _that.province = r.address.province;
+              let tempCity = r.address.city;
+              if (tempCity.substr(tempCity.length - 1, 1) === '市') {
+                tempCity = tempCity.substr(0, tempCity.length - 1)
+              }
+              _that.city = tempCity;
+              let tempProvince = r.address.province
+              if (tempProvince.substr(tempProvince.length - 1, 1) === '省') {
+                tempProvince = tempProvince.substr(0, tempProvince.length - 1)
+              }
+              _that.province = tempProvince
               _that.mapPointData.push({
                 name: r.address.city,
                 value: [r.point.lng, r.point.lat]
@@ -130,191 +91,108 @@ export default {
             window.addEventListener('resize',_that.resizeCharts);
           });
         } catch (e) {
-          console.log(e);
+          // console.log(e);
         }
       })
     },
     // 绘制地图
-    drawMapChart(mapName, mapJSON){
-      console.log(mapName)
-      console.log(mapJSON)
+    drawMapChart(mapName, mapJSON) {
+
       if (this.myChart != null && this.myChart != "" && this.myChart != undefined) {
         this.myChart.dispose();
       }
       this.myChart = this.$echarts.init(document.getElementById('mapChart'));
-      this.$echarts.registerMap(mapName,mapJSON);
-     this.option1 = {
-       geo: {
-         show: true,
-         type: 'map',
-         roam: false,
-         map: mapName,
-         selectedMode: true,
-         // label: {
-         //   emphasis: {
-         //     show: false
-         //   }
-         // },
-         label: {
-           normal: {
-             show: true,
-             position: 'top',
-             backgroundColor: 'rgba(255,141,26)',
-             borderRadius: 10,
-             padding: [6, 6],
-             color: '#fff',
-             textStyle: {
-               fontSize: 10,
-             }
-           },
-           emphasis: {
-             show: true,
-             padding: [5, 6],
-             backgroundColor: '',
-             lineHeight: 20,
-             color: '#000',
-             textStyle: {
-               fontSize: 20,
-             }
-           },
-           labelLayout: function (params) {
-             console.log(params)
-           },
-         },
-         itemStyle: {
-           normal: {
-             areaColor: '#DBEACB',   //地区
-             borderColor: '#9CA3A6',//边界
-           },
-           emphasis: {
-             areaColor: '#8CB36F', //选中的地区颜色
-           },
-         },
-         select: {
-           itemStyle: {
-               areaColor: '#8CB36F', //选中的地区颜色
-           },
-           label:{
-             show: true,
-             padding: [5, 6],
-             backgroundColor: '',
-             lineHeight: 20,
-             color: '#000',
-             fontSize: 20
-           }
-         }
+      this.$echarts.registerMap(mapName, mapJSON);
+      this.option1 = {
+        geo: {
+          show: true,
+          type: 'map',
+          roam: true,
+          map: mapName,
+          selectedMode: true,
+          zoom: 1, //设置初始化缩放比例
+          blue: {
+            itemStyle: {}
+          },
+          z: 1,
+          label: {
+            show: true,
+            position: 'top',
+            backgroundColor: 'rgba(255,141,26)',
+            borderRadius: 8,
+            padding: [3, 4],
+            color: '#fff',
+            lineHeight: 12,
+            textStyle: {
+              fontSize: 10,
+            },
+            labelLayout: function (params) {
+              // console.log(params)
+            },
+          },
+          itemStyle: {
+            normal: {
+              areaColor: '#DBEACB',   //地区
+              borderColor: '#9CA3A6',//边界
+              // oacity: 0.5,
+            },
+            emphasis: {
+              areaColor: '#8CB36F', //选中的地区颜色
+            },
+          },
+          select: {
+            itemStyle: {
+              areaColor: '#8CB36F', //选中的地区颜色
+            },
+            label: {
+              show: true,
+              padding: [5, 6],
+              backgroundColor: '',
+              lineHeight: 20,
+              color: '#000',
+              fontSize: 20
+            }
+          }
 
-       },
-       series: [
-         // {
-         //   type: 'map',
-         //   map: mapName,
-         //   roam: true,
-         //   tooltip: {
-         //     show: false
-         //   },
-         //   label: {
-         //     normal:{
-         //       show: true,
-         //       position: 'top',
-         //       backgroundColor: 'rgba(255,141,26)',
-         //       borderRadius: 10,
-         //       padding: [6, 6],
-         //       color: '#fff',
-         //       textStyle: {
-         //         fontSize: 10,
-         //       }
-         //     },
-         //     emphasis: {
-         //       show: true,
-         //       padding: [5, 6],
-         //       backgroundColor: '',
-         //       lineHeight: 20,
-         //       color: '#000',
-         //       textStyle: {
-         //         fontSize: 20,
-         //       }
-         //     },
-         //     // formatter(params:any) {
-         //     //   return `${params.data.name}`;
-         //     // }
-         //   },
-         //   labelLayout: function (params) {
-         //      console.log(params)
-         //   },
-         //   itemStyle: {
-         //     normal: {
-         //       areaColor: '#DBEACB',   //地区
-         //       borderColor: '#9CA3A6',//边界
-         //     },
-         //     emphasis: {
-         //       areaColor: '#8CB36F', //选中的地区颜色
-         //     },
-         //     select:{
-         //       areaColor: '#8CB36F', //选中的地区颜色
-         //     },
-         //
-         //   },
-         //   // emphasis:{
-         //   //   itemStyle:{
-         //   //     normal: {
-         //   //       areaColor: '#DBEACB',   //地区
-         //   //       borderColor: '#9CA3A6',//边界
-         //   //     },
-         //   //     emphasis: {
-         //   //       areaColor: '#8CB36F', //选中的地区颜色
-         //   //     },
-         //   //   }
-         //   // }
-         //
-         // }
-       ]
-     }
-
-      if (mapName != 'china') {
-        this.option1.geo.label.show = false;
+        },
+        series: [
+        ]
       }
-      // this.myChart.setOption(this.option1);
 
-
-      console.log(mapName)
+      // 江浙沪特色图标
       if (mapName == '浙江') {
-        console.log("zj")
-        this.option1.geo.label.normal.show = false
-        this.option1.geo.label.emphasis.show = false
+        this.option1.geo.zoom = 1.2
+        this.option1.geo.label.show = false
+        this.option1.geo.label.show = false
         this.option1.geo.select.label.show = false
-        for (let i=0;i<icon.zj.length;i++) {
-          console.log(this.option1.series.length)
+        for (let i = 0; i < icon.zj.length; i++) {
           this.option1.series.push(icon.zj[i])
-          console.log(this.option1.series.length)
-          this.option1.series=this.option1.series.concat(getDecoration('zj'));
-          console.log(this.option1.series.length)
+          this.option1.series = this.option1.series.concat(getDecoration('zj'));
         }
-      }else if (mapName == '江苏') {
-        this.option1.geo.label.normal.show = false
-        this.option1.geo.label.emphasis.show = false
+      } else if (mapName == '江苏') {
+        this.option1.geo.zoom = 1.2
+        this.option1.geo.label.show = false
+        this.option1.geo.label.show = false
         this.option1.geo.select.label.show = false
 
-        for (let i=0;i<icon.js.length;i++) {
+        for (let i = 0; i < icon.js.length; i++) {
           this.option1.series.push(icon.js[i])
           this.option1.series = this.option1.series.concat(getDecoration('js'));
         }
-      }else if (mapName == '上海') {
-        this.option1.geo.label.normal.show = false
-        this.option1.geo.label.emphasis.show = false
+      } else if (mapName == '上海') {
+        this.option1.geo.zoom = 1.5
+        this.option1.geo.label.show = false
+        this.option1.geo.label.show = false
         this.option1.geo.select.label.show = false
-        for (let i=0;i<icon.sh.length;i++) {
+        for (let i = 0; i < icon.sh.length; i++) {
           this.option1.series.push(icon.sh[i])
-          this.option1.series=this.option1.series.concat(getDecoration('sh'));
+          this.option1.series = this.option1.series.concat(getDecoration('sh'));
         }
       }
 
-      if (mapName == '海南') {
-        this.option1.geo.roam = true
-      }
-
+      // 定位图标
       if (mapName == 'china' || mapName == this.city || mapName == this.province) {
-        this.option1.series.push( {
+        this.option1.series.push({
           type: "scatter",
           coordinateSystem: "geo",
           //自定义图片的 位置（lng, lat）
@@ -322,72 +200,113 @@ export default {
           //自定义图片的 大小
           symbolSize: [20, 30],
           //自定义图片的 路径
-          symbol: `image://`+mapSymbol,
+          symbol: `image://` + mapSymbol,
         });
       }
 
-      console.log(this.option1.series.length)
-
       this.option = this.option1;
 
-      this.myChart.setOption(this.option);
+      // 地图区域点击事件
       this.myChart.on('click', (params) => {
-        if (params.componentIndex != 0) {
-          return
-        }
-        console.log('click', params);
-        const map = mapCode[params.name];
+        // if (params.geoIndex == undefined) {
+        //   console.log(params.name);
+        //
+        // }
+        this.onClickChart(params.name)
+      });
 
-        if(map){
-          this.curLevel = 1
-          //二级地区的介绍
-          this.curMapName = params.name;
-          this.getMapData(map);
-          // 为地图标题菜单存入（过滤同一地图多次点击情况）点击地图信息
-          let selectedCodes = [];
-          this.selectedMaps.forEach( item => selectedCodes.push(item.code));
-          if(!selectedCodes.includes(map)){
-            this.$set(this.selectedMaps,this.selectedMaps.length,{name: this.curMapName, code: map});
+      // 拖拽，缩放监听事件
+      this.myChart.on('georoam',(params) => {//选取的x轴值
+        if (params.zoom != undefined) {
+          let curZoom = params.zoom;
+
+          let opt = this.myChart.getOption();
+          for (let i = 0; i < this.option.series.length; i++) {
+            opt.series[i].symbolSize[0] = opt.series[i].symbolSize[0] * curZoom
+            opt.series[i].symbolSize[1] = opt.series[i].symbolSize[1] * curZoom
           }
-        }else{
-          console.log(this.curCity)
-          console.log(params.name)
-          if (this.curCity == params.name) {
-            console.log(this.curCity)
-            this.curLevel = 1;
-            this.curCity = '';
-          } else {
-            this.curCity = params.name;
-            this.curLevel =2
-            let curCityCode = cityCode[this.curCity]
-            console.log(curCityCode)
-            if (curCityCode!=undefined&&cityCode[this.curCity].substr(0, 3) == "310") {
-              curCityCode = "310000"
-            }
-            if (curCityCode != undefined) {
-              MapChartApi.getPoetryList({cityCode:curCityCode}).then(res=>{
-                let poetryList = res.data.data
-                let poetryLen = poetryList.length
-                let n = Math.floor(Math.random()*poetryLen);    // 可均衡获取 0 到 9 的随机整数。
-                this.poetryInfo = poetryList[n]
-              });
-
-              MapChartApi.getCityInfo({cityCode:curCityCode}).then(res=>{
-                this.cityInfo = res.data.data
-              });
-            }
-
-          }
-
-
-
-          //这里调用对具体3级地区的介绍
-
-          // this.$message({message: '暂无地图数据',type: 'warning',showClose: true});
+          // console.log(opt)
+          opt.geo[0].label.textStyle.fontSize =  opt.geo[0].label.textStyle.fontSize * curZoom
+          opt.geo[0].label.lineHeight =  opt.geo[0].label.lineHeight * curZoom
+          opt.geo[0].label.padding[0] =  opt.geo[0].label.padding[0] * curZoom
+          opt.geo[0].label.padding[1] =  opt.geo[0].label.padding[1] * curZoom
+          opt.geo[0].label.borderRadius =  opt.geo[0].label.borderRadius * curZoom
+          this.myChart.clear()
+          this.myChart.setOption(opt)
         }
       });
+
+      this.myChart.setOption(this.option);
+
+    },
+    onClickChart(name) {
+      // console.log(name)
+      const map = mapCode[name];
+      if (map) {
+        this.curLevel = 1
+        //二级地区的介绍
+        this.curMapName = name;
+        this.getMapData(map);
+        // 为地图标题菜单存入（过滤同一地图多次点击情况）点击地图信息
+        let selectedCodes = [];
+        this.selectedMaps.forEach(item => selectedCodes.push(item.code));
+        if (!selectedCodes.includes(map)) {
+          this.$set(this.selectedMaps, this.selectedMaps.length, {name: this.curMapName, code: map});
+        }
+      } else {
+        if (this.curCity == name) {
+          this.curLevel = 1;
+          this.curCity = '';
+        } else {
+          this.curCity =  name;
+          this.curLevel = 2
+          let curCityCode = cityCode[this.curCity]
+          if (curCityCode != undefined && cityCode[this.curCity].substr(0, 3) == "310") {
+            curCityCode = "310000"
+          }
+          if (curCityCode != undefined) {
+            // axios.defaults.baseURL = 'api'
+            MapChartApi.getPoetryList({cityCode:curCityCode}).then(res => {
+              if (res.data.code == '400') {
+                this.$message(res.data.msg);
+              } else if (res.data.code == '200') {
+                let poetryList = res.data.data;
+                let poetryLen = poetryList.length
+                let n = Math.floor(Math.random() * poetryLen);    // 可均衡获取 0 到 9 的随机整数。
+                this.poetryInfo = poetryList[n]
+                let temp = []
+                for (let i = 0, j = 0; i < this.poetryInfo.poetryList.length; i++) {
+                  if (i % 2 == 0) {
+                    temp[j] = this.poetryInfo.poetryList[i] + "," + this.poetryInfo.poetryList[i + 1] + "。";
+                    j++;
+                  }
+                }
+                this.poetryInfo.poetryList = temp
+              }
+            });
+            MapChartApi.getCityInfo({cityCode:curCityCode}).then(res => {
+              if (res.data.code == '400') {
+                this.$message(res.data.msg)
+              } else if (res.data.code == '200') {
+                if (res.data.data.length > 0) {
+                  this.cityInfo = res.data.data[0];
+                }
+              }
+            });
+          }
+
+        }
+      }
     },
 
+    delElByIndex(arr,index){
+      let len = arr.length-1
+      let temp = arr[index]
+      for(let i=index;i<len;i++)
+        arr[i]=arr[i+1];
+      arr.length = len;
+      return temp
+    },
 
 
     initMapData(mapJson) {
@@ -414,7 +333,8 @@ export default {
     },500),
     // 获取地图数据
     getMapData(map){
-      axios.get(`/json/map/${map}.json`).then((res) => {
+      // axios.defaults.baseURL = 'static'
+      axios.get(`static/json/map/${map}.json`).then((res) => {
         if(res.status == 200){
           const mapJSON = res.data;
           this.drawMapChart(this.curMapName, mapJSON);
@@ -422,10 +342,7 @@ export default {
       }).catch((err) => {
         this.$message({message: err,type: 'error',showClose: true});
       })
-    },
-    goGame(){
-      this.$router.push({name:'game'}) // 只能用 name
-    },
+    }
   },
 
   created() {

@@ -50,16 +50,11 @@ export function rayCasting(p, poly) {
 
 //判断点有没有在某个行政区
 export function isPointInAreas(p, mapJson) {
-  console.log("进入isPointAreas函数")
   const areas = mapJson.features
   let flag = false
-  console.log("areas的长度是：" + areas.length);
   for(let i = 0; i < areas.length; i++) {
     // console.log("这个for循环没有进来吗")
-    console.log("rayCasting的结果是：" + rayCasting(p, areas[i].geometry.coordinates[0]))
     if(rayCasting(p, areas[i].geometry.coordinates[0])) {
-      console.log("areas[i].geometry.coordinates[0]的结果是：" + areas[i].geometry.coordinates[0])
-      console.log("rayCasting的结果是：" + rayCasting(p, areas[i].geometry.coordinates[0]))
       flag = true
       break
     }

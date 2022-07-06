@@ -8,7 +8,6 @@ import store from './store'
 import axios from 'axios' //导入axios
 Vue.prototype.$axios = axios //修改原始数据
 
-// import echarts from 'echarts';
 import * as echarts from 'echarts'; // 如果安装的是echarts 5以上版本，则需此种方式引入
 
 const setHtmlFontSize = () => {

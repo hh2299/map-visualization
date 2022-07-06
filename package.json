@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build"
+    "build": "vue-cli-service build",
+    "dev": "vue-cli-service build --mode development",
+    "test": "vue-cli-service build --mode test"
   },
   "dependencies": {
     "axios": "^0.21.1",
@@ -26,7 +28,8 @@
     "lib-flexible": "^0.3.2",
     "province-city-china": "^8.5.0",
     "px2rem-loader": "^0.1.9",
-    "vue-template-compiler": "^2.6.11"
+    "vue-template-compiler": "^2.6.11",
+    "webpack-cli": "^4.10.0"
   },
   "browserslist": [
     "> 1%",

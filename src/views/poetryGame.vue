@@ -96,7 +96,6 @@ export default {
         let verseNWord = curStagePoetry[i].length
         let randInt = Math.floor(Math.random()*(verseNWord))
         let wordList = [...curStagePoetry[i].split("")]
-        console.log(wordList)
         wordList[randInt] = ''
         let tmp = {
           wordList:wordList,
@@ -149,23 +148,19 @@ export default {
       this.$forceUpdate()
     },
     getNextInput(oldVerseN){
-      console.log("next")
       let size = this.tempMatrix.length
       let newVerseN = oldVerseN + 1
       while(true){
-        console.log(newVerseN)
         if (newVerseN > size-1){
           newVerseN = 0
         }
         let tmp = this.tempMatrix[newVerseN].selectIndex
-        console.log(tmp)
         if (tmp == null){
           this.selectRect = [newVerseN,this.tempMatrix[newVerseN].hideIndex]
           return
         }
         newVerseN++
         if (newVerseN==oldVerseN){
-          console.log('aaaa')
           this.isAllAnswer = true
           this.selectRect = [-1,-1]
           this.checkSuccess()
@@ -177,11 +172,8 @@ export default {
     checkItemSuccess(index) {
       let a = this.tempMatrix[index].wordList.toString()
       let b = this.stageList[this.curStage].poetryList[index].split("").toString()
-      console.log(a)
-      console.log(b)
       if(a==b){
         this.tempMatrix[index].success = true
-        console.log(true)
       }else {
         this.tempMatrix[index].success = false
         if (a.length==b.length){
@@ -195,7 +187,6 @@ export default {
       }
     },
     checkSuccess() {
-      console.log('checkSuccess')
       for (let i=0;i<this.tempMatrix.length;i++){
         if (this.tempMatrix[i].success==false)
           return

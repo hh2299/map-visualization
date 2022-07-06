@@ -6,11 +6,11 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
-    redirect:'/mapChart.js'
+    redirect:'/mapChart'
 
   },
   {
-    path: '/mapChart.js',
+    path: '/mapChart',
     name: 'mapChart',
     component: () => import('../views/mapChart/mapChart.vue')
   },

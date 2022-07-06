@@ -1,17 +1,8 @@
 <template>
-  <div class="chart pt-10">
-    <el-card class="box-card" id="main-box">
+  <div class="chart">
+    <div class="box-card" id="main-box">
 
-<!--      顶部栏-->
-      <div class="mapChoose" >
-        <el-button @click="chooseMap(selectedMaps[0],0)" v-if="selectedMaps.length>1" class="returnCountry">
-          <img src="./../../assets/img/back.png" />
-        </el-button>
-<!--        class="returnCountry"  >-->
-<!--          <img src="../../assets/img/leftArrow.png" style="width: 0.7vmax;height: 1.4vmax">-->
-<!--        </el-button>-->
-        <div class="curCity" v-if="selectedMaps.length>1">{{selectedMaps[1].name}}</div>
-      </div>
+
 
 <!--      地图-->
     <div class="mapDiv">
@@ -22,10 +13,55 @@
       >
       </div>
 
+      <div class="mapChoose" >
+        <div class="curCity" v-if="selectedMaps.length>1">{{selectedMaps[1].name}}</div>
+      </div>
 <!--      地区介绍-->
-      <el-card  class="box-card" id="info-box" v-if="(curMapName=='浙江'||curMapName=='江苏'||curMapName=='上海')&&deviceMode==1&&curCity!=''" >
+      <el-card  class="box-card" id="info-box" v-if="(curMapName=='浙江'||curMapName=='江苏'||curMapName=='上海')&&deviceMode==1&&curLevel==2" >
 
-        <div style="width: 100%;height:36vh;overflow-y:auto;">
+        <div class="info">
+          <img src="../../assets/img/infoHead.png">
+          <p class="info_label_p">介绍:</p>
+          <a :href="cityInfo.video" target="_blank" referrerpolicy="no-referrer" style="color: #584338;text-decoration: underline">
+            <p class="info_label_city" >
+              {{curCity}}
+            </p>
+          </a>
+          <br/>
+          <p class="info_p">{{cityInfo.info}}</p>
+          <br/>
+          <p class="info_label_p">自然风光</p>
+          <br/>
+          <p class="info_p">{{cityInfo.nature}}</p>
+          <br/>
+          <p class="info_label_p">景观</p>
+          <br/>
+          <p class="info_p">{{cityInfo.landscape}}</p>
+          <br/>
+          <p class="info_label_p">名人</p>
+          <br/>
+          <p class="info_p">{{cityInfo.celebrity}}</p>
+          <br/>
+          <p class="info_label_p">特产</p>
+          <br/>
+          <p class="info_p">{{cityInfo.specialties}}</p>
+          <br/>
+          <p class="info_label_p">故事</p>
+          <br/>
+          <p class="info_p">{{cityInfo.story}}</p>
+          <br/>
+          <p class="info_label_p">民俗</p>
+          <br/>
+          <p class="info_p">{{cityInfo.folklore}}</p>
+          <br/>
+          <p class="info_label_p">地理环境</p>
+          <br/>
+          <p class="info_p">{{cityInfo.add}}</p>
+
+        </div>
+      </el-card>
+      <el-card  class="box-card" id="info-box2" v-if="(curMapName=='浙江'||curMapName=='江苏'||curMapName=='上海')&&deviceMode==0&&curLevel==2" >
+        <div class="info">
           <img src="../../assets/img/infoHead.png" style="display: inline-block;vertical-align: bottom;width: 1.6vw;height: 1.6vw">
           <p style="color: #77D1DD;display: inline-block;font-size: 1.4vw;vertical-align: bottom;margin: 0px">介绍</p>
           <a :href="cityInfo.video" target="_blank" referrerpolicy="no-referrer">
@@ -34,64 +70,62 @@
             </p>
           </a>
           <br/>
-          <p style="text-indent: 2em;font-size: 1vmax;display: inline-block;vertical-align: bottom;margin: 0px">{{cityInfo.info}}</p>
-          <p style="color: #77D1DD;display: inline-block;font-size: 1.4vw;vertical-align: bottom;margin: 0px">自然风光</p>
+          <p class="info_p">{{cityInfo.info}}</p>
           <br/>
-          <p style="text-indent: 2em;font-size: 1vmax;display: inline-block;vertical-align: bottom;margin: 0px">{{cityInfo.nature}}</p>
+          <p class="info_label_p">自然风光</p>
           <br/>
-          <p style="color: #77D1DD;display: inline-block;font-size: 1.4vw;vertical-align: bottom;margin: 0px">景观</p>
+          <p class="info_p">{{cityInfo.nature}}</p>
           <br/>
-          <p style="text-indent: 2em;font-size: 1vmax;display: inline-block;vertical-align: bottom;margin: 0px">{{cityInfo.landscape}}</p>
+          <p class="info_label_p">景观</p>
           <br/>
-          <p style="color: #77D1DD;display: inline-block;font-size: 1.4vw;vertical-align: bottom;margin: 0px">景观</p>
+          <p class="info_p">{{cityInfo.landscape}}</p>
           <br/>
-          <p style="text-indent: 2em;font-size: 1vmax;display: inline-block;vertical-align: bottom;margin: 0px">{{cityInfo.landscape}}</p>
+          <p class="info_label_p">名人</p>
           <br/>
-          <p style="color: #77D1DD;display: inline-block;font-size: 1.4vw;vertical-align: bottom;margin: 0px">名人</p>
+          <p class="info_p">{{cityInfo.celebrity}}</p>
           <br/>
-          <p style="text-indent: 2em;font-size: 1vmax;display: inline-block;vertical-align: bottom;margin: 0px">{{cityInfo.celebrity}}</p>
+          <p class="info_label_p">特产</p>
           <br/>
-          <p style="color: #77D1DD;display: inline-block;font-size: 1.4vw;vertical-align: bottom;margin: 0px">特产</p>
+          <p class="info_p">{{cityInfo.specialties}}</p>
           <br/>
-          <p style="text-indent: 2em;font-size: 1vmax;display: inline-block;vertical-align: bottom;margin: 0px">{{cityInfo.specialties}}</p>
+          <p class="info_label_p">故事</p>
           <br/>
-          <p style="color: #77D1DD;display: inline-block;font-size: 1.4vw;vertical-align: bottom;margin: 0px">故事</p>
+          <p class="info_p">{{cityInfo.story}}</p>
           <br/>
-          <p style="text-indent: 2em;font-size: 1vmax;display: inline-block;vertical-align: bottom;margin: 0px">{{cityInfo.story}}</p>
+          <p class="info_label_p">民俗</p>
           <br/>
-          <p style="color: #77D1DD;display: inline-block;font-size: 1.4vw;vertical-align: bottom;margin: 0px">民俗</p>
+          <p class="info_p">{{cityInfo.folklore}}</p>
           <br/>
-          <p style="text-indent: 2em;font-size: 1vmax;display: inline-block;vertical-align: bottom;margin: 0px">{{cityInfo.folklore}}</p>
+          <p class="info_label_p">地理环境</p>
           <br/>
-          <p style="color: #77D1DD;display: inline-block;font-size: 1.4vw;vertical-align: bottom;margin: 0px">地理环境</p>
-          <br/>
-          <p style="text-indent: 2em;font-size: 1vmax;display: inline-block;vertical-align: bottom;margin: 0px">{{cityInfo.add}}</p>
-
+          <p class="info_p">{{cityInfo.add}}</p>
         </div>
-      </el-card>
-      <el-card  class="box-card" id="info-box2" v-if="(curMapName=='浙江'||curMapName=='江苏'||curMapName=='上海')&&deviceMode==0&&curCity!=''" >
-          <span ><img src="../../assets/img/infoHead.png" style="display: inline-block;vertical-align: bottom;width: 1.6vmax;height: 1.6vmax">
-            <p style="color: #77D1DD;display: inline-block;font-size: 1.4vmax;vertical-align: bottom;margin: 0px">介绍</p>
-            <p style="font-size: 1.4vmax;display: inline-block;vertical-align: bottom;margin: 0px">:{{curCity}}</p>
-          </span>
+
       </el-card>
 <!--      诗歌-->
-      <el-card  class="box-card" id="info-box3" v-if="(curMapName=='浙江'||curMapName=='江苏'||curMapName=='上海')&&deviceMode==1&&curCity!=''" >
-        {{poetryInfo.name}}
-        <br/>
-        作者: {{poetryInfo.author}}
-        <div class="poetryList" v-for="i in poetryInfo.poetryList">
-          {{i}}
+      <el-card  class="box-card" id="info-box3" v-if="(curMapName=='浙江'||curMapName=='江苏'||curMapName=='上海')&&deviceMode==1&&curLevel==2" >
+        <div class="poetry">
+          <p style="letter-spacing: 0.3em">{{poetryInfo.name}}</p>
+          <p style="letter-spacing: 0.2em">作者: {{poetryInfo.author}}</p>
+          <div class="poetryList" v-for="i in poetryInfo.poetryList">
+            <p style="letter-spacing: 0.2em">{{i}}</p>
+          </div>
         </div>
-
       </el-card>
-      <el-card  class="box-card" id="info-box4" v-if="curMapName!='china'&&deviceMode==0" >
+      <el-card  class="box-card" id="info-box4" v-if="(curMapName=='浙江'||curMapName=='江苏'||curMapName=='上海')&&deviceMode==0&&curLevel==2" >
+        <div class="poetry">
+          <p style="letter-spacing: 0.3em">{{poetryInfo.name}}</p>
+          <p style="letter-spacing: 0.2em">作者bxo4: {{poetryInfo.author}}</p>
+          <div class="poetryList" v-for="i in poetryInfo.poetryList">
+            <p style="letter-spacing: 0.2em">{{i}}</p>
+          </div>
+        </div>
       </el-card>
 
     </div>
 
 
-    </el-card>
+    </div>
   </div>
 </template>
 

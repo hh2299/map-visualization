@@ -1,45 +1,53 @@
 .chart {
   height: 100vh;
+  overflow: hidden;
   background-image: linear-gradient(to bottom, white, powderblue);
-
+  padding-top: 0px;
   .mapDiv {
     width: 100%;
-    height: 80vh;
+    height: 100vh;
     overflow: hidden;
     display: inline-block;
     .mapChartBig {
       float: left;
       display: inline;
-      width: 75%;
-      height: 90vh;
-      padding-left: 12.5%;
+      width: 100%;
+      height: 100%;
+      //padding-left: 12.5%;
     }
 
     .mapChartSmall {
+      //float: left;
+      //display: inline;
+      //width: 50%;
+      //height:  80vh;
       float: left;
       display: inline;
-      width: 50%;
-      height: 70vh;
+      width: 100%;
+      height: 100%;
+      //padding-left: 12.5%;
     }
 
     .mapChartPhone {
       float: left;
       display: inline;
-      width: 90%;
+      width: 100%;
       height: 70vw;
     }
-    .box-card{
+    .box-card {
       border-radius: 1vmax;
-      .el-link{
+      position: absolute;
+      .el-link {}
 
-      }
     }
+
   }
 
 
   .mapChoose {
+    position: absolute;
     margin-left: 1vw;
-    margin-top: 1vh;
+    margin-top: 2vh;
     color: #eee;
     font-size: 1.6vw;
     .returnCountry{
@@ -80,10 +88,6 @@
     }
   }
 
-  .pt-10 {
-    padding-top: 10px;
-  }
-
   .el-card__header{
     padding: 0px 20px;
   }
@@ -92,12 +96,13 @@
 
 
 #main-box {
-  margin-left: 5vw;
-  margin-top: 5vh;
-  margin-bottom: 5vh;
-  width: 90vw;
-  border-radius: 5vh;
-  height: fit-content;
+  //margin-left: 5vw;
+  //margin-top: 5vh;
+  //margin-bottom: 5vh;
+  display: inline-block;
+  width: 100%;
+  //border-radius: 5vh;
+  height: 100vh;
 
 }
 
@@ -106,6 +111,8 @@
   height: 40vh;
   width: 40vw;
   letter-spacing: 0.4vw;
+  margin-top: 10vh;
+  margin-left: 55%;
   #gameButton {
     float: right;
     border-radius: 3vh;
@@ -119,11 +126,48 @@
     display: inline-block;
     vertical-align: bottom
   }
+  .info {
+    width: 100%;
+    height: 36vh;
+    overflow-y: auto;
+    img {
+      display: inline-block;
+      vertical-align: bottom;
+      width: 1.6vw;
+      height: 1.6vw;
+    }
+    .info_p {
+      color: #584338;
+      text-indent: 2em;
+      letter-spacing: 0.1em;
+      font-size: 1vmax;
+      display: inline-block;
+      vertical-align: bottom;
+      margin: 1vh 0px
+    }
+    .info_label_p {
+      letter-spacing: 0.2em;
+      color: #77D1DD;
+      display: inline-block;
+      font-size: 1.4vw;
+      vertical-align: bottom;
+      margin: 0px;
+    }
+    .info_label_city {
+      font-size: 1.4vw;
+      display: inline-block;
+      vertical-align: bottom;
+      margin: 0px;
+      text-indent: 2em;
+    }
+  }
 }
 #info-box2{
+  margin-left: 5vw;
+  margin-top: 50vh;
   background-color: #ffffff;
   height: 30vh;
-  width: 99%;
+  width: 40vw;
   letter-spacing: 0.4vw;
   #gameButton {
     float: right;
@@ -138,20 +182,76 @@
     display: inline-block;
     vertical-align: bottom
   }
+  .info {
+    width: 100%;
+    height: 36vh;
+    overflow-y: auto;
+    img {
+      display: inline-block;
+      vertical-align: bottom;
+      width: 1.6vw;
+      height: 1.6vw;
+    }
+    .info_p {
+      color: #584338;
+      text-indent: 2em;
+      letter-spacing: 0.1em;
+      font-size: 1vmax;
+      display: inline-block;
+      vertical-align: bottom;
+      margin: 1vh 0px
+    }
+    .info_label_p {
+      letter-spacing: 0.2em;
+      color: #77D1DD;
+      display: inline-block;
+      font-size: 1.4vw;
+      vertical-align: bottom;
+      margin: 0px;
+    }
+  }
 }
 #info-box3{
   background-color: #ffffff;
   height: 20vh;
   width: 40vw;
+  margin-left: 55%;
   letter-spacing: 0.4vw;
-  margin-top: 5vh;
+  margin-top: 60vh;
+  .el-card__body{
+    padding: 5px;
+  }
+  .poetry {
+    width: 100%;
+    height: 14vh;
+    overflow-y: auto;
+    p {
+      color: #584338;
+      font-size: 1vw;
+      margin: 0px;
+    }
+  }
 }
 
 #info-box4{
   background-color: #ffffff;
-  height: 30vh;
-  width: 99%;
+  height: 20vh;
+  width: 40vw;
   letter-spacing: 0.4vw;
-  margin-top: 5vh;
+  margin-top: 50vh;
+  margin-left: 50vw;
+  .el-card__body{
+    padding: 5px;
+  }
+  .poetry {
+    width: 100%;
+    height: 14vh;
+    overflow-y: auto;
+    p {
+      color: #584338;
+      font-size: 1vw;
+      margin: 0px;
+    }
+  }
 }
 

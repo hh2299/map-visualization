@@ -378,7 +378,6 @@
               this.$emit('mapClick', params)
               this.goDown(params.name)
             } else if (params.componentSubType == 'scatter' || params.componentSubType == 'effectScatter') {
-              console.log(params.componentSubType,"click")
               this.$emit('pointClick', params)
             }
           })
