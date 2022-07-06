@@ -2,62 +2,91 @@
  * 请求工具
  */
 
-// import {getToken, getUserToken, getRedirectUrlLogin} from '@/utils/common'
+import Axios from 'axios'
+
 
 //后台的contextPath 不是http 全路径 ，请求后台用反向代理
-// const baseUrl = 'http://47.114.105.158:8081/'
-const baseUrl = 'http://47.114.105.158:8081/'
+const baseUrl = 'api'
 
+/*
+ * 请求配置 config
+ */
+const getConfig = (url, method, isJSON, params,message={message:false,hideLoading:false},isDownload=false) => {
+    // console.log(message)
+    var split = '/'
+    if(url.substring(0,1) == '/') {
+        split = '';
+    }
 
-function post(url, params) {
-  params = JSON.stringify(params)
-  let that = this
-  $.ajax({
-    type:'post',
-    url: baseUrl+url,
-    data:params,
-    async:false,
-    contentType: "application/json;charset=UTF-8",
-    datatype:'json',               //同步调用，保证先执行result=true,后再执行return result;
-    success:function(res){
-      if(res.status==200){
-        data = res.data
+    let config = {
+        url: `${baseUrl}${split}${url}`,
+        method,
+        headers: {
 
-      }else{
-        that.$alert(data)
-      }
-    },
-    error: function (XMLHttpRequest, textStatus, errorThrown) {
-      alert(XMLHttpRequest.status);
-      alert(XMLHttpRequest.readyState);
-      alert(textStatus);
-    },
-  });
-  return data
+        },
+        hideLoading:message.hideLoading,
+        message:message.message
+    }
+    if(isDownload) {
+        config.responseType ='blob'
+    }
+
+    if (!isJSON) {
+        config.headers['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8'
+        // params = Qs.stringify(params)
+    } else {
+        config.headers['Content-Type'] = 'application/json; charset=UTF-8'
+    }
+
+    if (method in {get: true, delete: true}) {
+        config.params = params
+    } else {
+        config.data = params
+        // config.data.buildingIds = ["89892831829","123123122"];
+    }
+    return config
 }
 
-function get(url, param){
-  let that = this
-  let id = param.id
-  $.ajax({
-    type:'get',
-    url: baseUrl+url+'?id='+id,
-    async:false,
-    contentType: "application/json;charset=UTF-8",
-    datatype:'json',               //同步调用，保证先执行result=true,后再执行return result;
-    success:function(res){
-      if(res.status==200){
-        data = res.data
+/**
+ * post方式请求 json方式传参
+ * @param url 请求url
+ * @param params payload 参数
+ *
+ */
 
-      }else{
-        that.$alert(data)
-      }
-    },
-    error: function (XMLHttpRequest, textStatus, errorThrown) {
-      alert(XMLHttpRequest.status);
-      alert(XMLHttpRequest.readyState);
-      alert(textStatus);
-    },
-  });
-  return data
+const post = (url, params,message) => {
+    return Axios(getConfig(url, 'post', true, params,message))
+}
+const postDownload = (url, params, hideLoading) => {
+
+    return Axios(getConfig(url, 'post', true, params,hideLoading,true))
+}
+/**
+ * post方式请求 表单传参
+ * @param url 请求url
+ * @param params fromData 参数
+ */
+
+const postForm = (url, params,hideLoading) => {
+    return Axios(getConfig(url, 'post', false, params,hideLoading))
+}
+
+
+/**
+ * get方式请求，url传参
+ * @param url 请求url
+ * @param params 参数
+ */
+
+const get = (url, params,message) => {
+    return Axios(getConfig(url, 'get', false, params,message))
+}
+
+export {
+    Axios,
+    get,
+    post,
+    postForm,
+    postDownload,
+    baseUrl
 }

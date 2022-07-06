@@ -6,11 +6,11 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
-    redirect:'/mapChart'
+    redirect:'/mapChart.js'
 
   },
   {
-    path: '/mapChart',
+    path: '/mapChart.js',
     name: 'mapChart',
     component: () => import('../views/mapChart/mapChart.vue')
   },
@@ -18,12 +18,7 @@ const routes = [
     path: '/game',
     name: 'game',
     component: () => import('../views/poetryGame.vue')
-  },
-  {
-    path: '/test',
-    name: 'test',
-    component: () => import('../views/test.vue')
-  },
+  }
 ]
 
 const router = new VueRouter({
