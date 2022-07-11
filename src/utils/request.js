@@ -13,6 +13,7 @@ const baseUrl = 'api/1.0'
  */
 export const getConfig = (url, method, isJSON, params, message={message:false,hideLoading:false}, isDownload=false) => {
     var split = '/'
+    console.log(baseUrl)
     if(url.substring(0,1) == '/') {
         split = '';
     }
