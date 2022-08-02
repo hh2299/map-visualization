@@ -6,6 +6,7 @@ import {loadBMap} from "../../assets/js/loadBMap";
 import * as MapChartApi from "@/api/mapChart.js"
 import * as icon from "./iconLocation"
 import {getDecoration} from "./iconLocation";
+import th from "element-ui/src/locale/lang/th";
 
 
 export default {
@@ -56,44 +57,47 @@ export default {
   },
   methods:{
     // 定位
-    getlocation() {
-      this.$nextTick(function () {
-        try {
-          const geolocation = new BMap.Geolocation();
-          let _that = this;
-          this.loading = this.$loading({
-            lock: true,
-            text: 'Loading',
-            spinner: 'el-icon-loading',
-            background: 'rgba(0, 0, 0, 0.7)'
-          });
-          geolocation.getCurrentPosition(r => {
-            if (geolocation.getStatus() == BMAP_STATUS_SUCCESS) {
-              _that.lat = r.point.lat;
-              _that.lng = r.point.lng;
-              let tempCity = r.address.city;
-              if (tempCity.substr(tempCity.length - 1, 1) === '市') {
-                tempCity = tempCity.substr(0, tempCity.length - 1)
+    getlocation(mapCode) {
+        this.$nextTick(function () {
+          try {
+            const geolocation = new BMap.Geolocation();
+            let _that = this;
+            this.loading = this.$loading({
+              lock: true,
+              text: 'Loading',
+              spinner: 'el-icon-loading',
+              background: 'rgba(0, 0, 0, 0.7)'
+            });
+            geolocation.getCurrentPosition(r => {
+              if (geolocation.getStatus() == BMAP_STATUS_SUCCESS) {
+                _that.lat = r.point.lat;
+                _that.lng = r.point.lng;
+                let tempCity = r.address.city;
+                if (tempCity.substr(tempCity.length - 1, 1) === '市') {
+                  tempCity = tempCity.substr(0, tempCity.length - 1)
+                }
+                _that.city = tempCity;
+                let tempProvince = r.address.province
+                if (tempProvince.substr(tempProvince.length - 1, 1) === '省') {
+                  tempProvince = tempProvince.substr(0, tempProvince.length - 1)
+                }
+                _that.province = tempProvince
+                _that.mapPointData.push({
+                  name: r.address.city,
+                  value: [r.point.lng, r.point.lat]
+                })
               }
-              _that.city = tempCity;
-              let tempProvince = r.address.province
-              if (tempProvince.substr(tempProvince.length - 1, 1) === '省') {
-                tempProvince = tempProvince.substr(0, tempProvince.length - 1)
+              if (mapCode != undefined) {
+                _that.getMapData(mapCode);
+              } else {
+                _that.getMapData(_that.chinaCode);
               }
-              _that.province = tempProvince
-              _that.mapPointData.push({
-                name: r.address.city,
-                value: [r.point.lng, r.point.lat]
-              })
-            }
-            _that.getMapData(_that.chinaCode);
-            this.loading.close()
-            window.addEventListener('resize',_that.resizeCharts);
-          });
-        } catch (e) {
-          // console.log(e);
-        }
-      })
+              window.addEventListener('resize', _that.resizeCharts);
+            });
+          } catch (e) {
+            // console.log(e);
+          }
+        })
     },
     // 绘制地图
     drawMapChart(mapName, mapJSON) {
@@ -130,7 +134,7 @@ export default {
               // console.log(params)
             },
           },
-          itemStyle: {
+            itemStyle: {
             normal: {
               areaColor: '#DBEACB',   //地区
               borderColor: '#9CA3A6',//边界
@@ -156,6 +160,36 @@ export default {
 
         },
         series: [
+          {
+            type: 'map',
+            map: mapName,
+            roam: false,
+            geoIndex: 0,
+            tooltip: {
+              show: false
+            },
+            label: {
+              show: false,
+              color: '#fff'
+            },
+            itemStyle: {
+              normal: {
+                areaColor: '#031525',
+                borderColor: '#FFFFFF',
+              },
+              emphasis: {
+                areaColor: '#2B91B7'
+              }
+            },
+            emphasis: {
+              itemStyle: {
+                areaColor: ''
+              },
+              label: {
+                show: false
+              }
+            }
+          }
         ]
       }
 
@@ -205,6 +239,7 @@ export default {
       }
 
       this.option = this.option1;
+      console.log(this.option)
 
       // 地图区域点击事件
       this.myChart.on('click', (params) => {
@@ -212,10 +247,14 @@ export default {
         //   console.log(params.name);
         //
         // }
+        console.log(params)
         this.onClickChart(params.name)
       });
 
       // 拖拽，缩放监听事件
+
+
+
       this.myChart.on('georoam',(params) => {//选取的x轴值
         if (params.zoom != undefined) {
           let curZoom = params.zoom;
@@ -236,11 +275,12 @@ export default {
         }
       });
 
+      console.log(this.option1)
       this.myChart.setOption(this.option);
 
     },
     onClickChart(name) {
-      // console.log(name)
+      console.log(name)
       const map = mapCode[name];
       if (map) {
         this.curLevel = 1
@@ -250,10 +290,12 @@ export default {
         // 为地图标题菜单存入（过滤同一地图多次点击情况）点击地图信息
         let selectedCodes = [];
         this.selectedMaps.forEach(item => selectedCodes.push(item.code));
+        console.log(selectedCodes)
         if (!selectedCodes.includes(map)) {
           this.$set(this.selectedMaps, this.selectedMaps.length, {name: this.curMapName, code: map});
         }
       } else {
+        console.log('iiii')
         if (this.curCity == name) {
           this.curLevel = 1;
           this.curCity = '';
@@ -264,6 +306,10 @@ export default {
           if (curCityCode != undefined && cityCode[this.curCity].substr(0, 3) == "310") {
             curCityCode = "310000"
           }
+          this.myChart.dispatchAction({
+            type: 'mapSelect',
+            name: name
+          });//
           if (curCityCode != undefined) {
             // axios.defaults.baseURL = 'api'
             MapChartApi.getPoetryList({cityCode:curCityCode}).then(res => {
@@ -308,6 +354,13 @@ export default {
       return temp
     },
 
+    getAndroid() {
+      console.log("2start")
+      this.onClickChart("浙江")
+      this.onClickChart("杭州")
+      console.log("2end")
+      this.loading.close();
+    },
 
     initMapData(mapJson) {
       let mapData = [];
@@ -345,9 +398,16 @@ export default {
     }
   },
 
+  mounted() {
+
+  },
+
   created() {
     window.initBaiduMapScript = () => {
-      this.getlocation();
+      let map = mapCode['浙江']
+      this.getlocation(map)
+      this.getAndroid();
+
     }
     loadBMap('initBaiduMapScript');
   },
